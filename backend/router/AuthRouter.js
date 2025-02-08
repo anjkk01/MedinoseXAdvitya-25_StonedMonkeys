@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const validateForm= require("../controllers/validateForm.js")
+const validateForm= require("../ValidateForm.js")
 const {handleLogin, attemptLogin, attemptRegister}= require("../controllers/AuthController.js")
 
 router.route("/login")

@@ -14,7 +14,8 @@ model doctor_table {
   password            String                @db.VarChar(255)
   name                String                @db.VarChar(255)
   rating              Decimal?              @db.Decimal(3, 2)
-  charge_per_hour     Decimal               @db.Decimal(10, 2)
+  charge_per_hour     Decimal?              @db.Decimal(10, 2)
+  userid              String                @unique @db.VarChar(255)
   doctor_appointment  doctor_appointment[]
   doctor_availability doctor_availability[]
   languages_table     languages_table[]
@@ -25,6 +26,7 @@ model patient_table {
   patient_id         Int                  @id @default(autoincrement())
   username           String               @unique @db.VarChar(255)
   password           String               @db.VarChar(255)
+  userid             String               @unique @db.VarChar(255)
   doctor_appointment doctor_appointment[]
 }
 

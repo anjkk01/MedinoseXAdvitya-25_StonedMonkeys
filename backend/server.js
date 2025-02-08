@@ -2,8 +2,9 @@ const express = require("express");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
-const authRouter = require("./routers/Authrouter.js");
+const authRouter = require("./router/Authrouter.js");
 const { sessionMiddleware, wrap, corsConfig} = require("./controllers/ServerController.js");
+const {authorizeUser}= require("./controllers/SocketController.js")
 const helmet = require("helmet");
 
 const app = express();
