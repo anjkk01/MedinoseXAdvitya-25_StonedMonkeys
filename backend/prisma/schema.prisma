@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model doctor_table {
+  doctor_id           Int                   @id @default(autoincrement())
+  username            String                @unique @db.VarChar(255)
+  password            String                @db.VarChar(255)
+  name                String                @db.VarChar(255)
+  rating              Decimal?              @db.Decimal(3, 2)
+  charge_per_hour     Decimal               @db.Decimal(10, 2)
+  doctor_appointment  doctor_appointment[]
+  doctor_availability doctor_availability[]
+  languages_table     languages_table[]
+  speciality_table    speciality_table[]
+}
+
+model patient_table {
+  patient_id         Int                  @id @default(autoincrement())
+  username           String               @unique @db.VarChar(255)
+  password           String               @db.VarChar(255)
+  doctor_appointment doctor_appointment[]
+}
+
+model doctor_appointment {
+  appointment_id   Int           @id @default(autoincrement())
+  doctor_id        Int
+  patient_id       Int
+  appointment_date DateTime      @db.Date
+  time_from        DateTime      @db.Time(6)
+  time_to          DateTime      @db.Time(6)
+  doctor_table     doctor_table  @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_doctor")
+  patient_table    patient_table @relation(fields: [patient_id], references: [patient_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_patient")
+}
+
+model languages_table {
+  language_id   Int          @id @default(autoincrement())
+  doctor_id     Int
+  language_name String       @db.VarChar(100)
+  doctor_table  doctor_table @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_doctor_languages")
+
+  @@unique([doctor_id, language_name], map: "unique_doctor_language")
+}
+
+model speciality_table {
+  speciality_id   Int          @id @default(autoincrement())
+  doctor_id       Int
+  speciality_name String       @db.VarChar(100)
+  doctor_table    doctor_table @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_doctor_speciality")
+
+  @@unique([doctor_id, speciality_name], map: "unique_doctor_speciality")
+}
+
+model chat_history {
+  id        Int      @id @default(autoincrement())
+  user_id   String   @db.VarChar(255)
+  message   String
+  response  String
+  timestamp DateTime @default(now())
+}
+
+model doctor_availability {
+  availability_id Int          @id @default(autoincrement())
+  doctor_id       Int
+  available_date  DateTime     @db.Date
+  time_from       DateTime     @db.Time(6)
+  time_to         DateTime     @db.Time(6)
+  doctor_table    doctor_table @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_doctor_availability")
+
+  @@unique([doctor_id, available_date, time_from, time_to], map: "unique_availability_slot")
+}
