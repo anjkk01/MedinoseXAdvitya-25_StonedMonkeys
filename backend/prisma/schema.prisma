@@ -37,6 +37,8 @@ model doctor_appointment {
   time_to          DateTime      @db.Time(6)
   doctor_table     doctor_table  @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_doctor")
   patient_table    patient_table @relation(fields: [patient_id], references: [patient_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_patient")
+
+  @@index([appointment_date(sort: Desc), time_from(sort: Desc)], map: "idx_appointment_date_time")
 }
 
 model languages_table {
@@ -74,4 +76,5 @@ model doctor_availability {
   doctor_table    doctor_table @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_doctor_availability")
 
   @@unique([doctor_id, available_date, time_from, time_to], map: "unique_availability_slot")
+  @@index([available_date(sort: Desc), time_from(sort: Desc)], map: "idx_availability_date_time")
 }
